@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     sign:function(){
-      this.$router.push('/Signin');
+      this.$router.push('/signin');
     },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
