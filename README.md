@@ -1,4 +1,4 @@
-# tabs
+# SCS
 
 ## Project setup
 ```
