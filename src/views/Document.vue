@@ -37,9 +37,7 @@
                   <i class="el-icon-arrow-right"></i>
                 </label>
               </div>
-              <div class="uploader-btn" style="width:90px;right:334px;" @click="creatFolder">
-                <i class="el-icon-folder-add"></i> 新建文件夹
-              </div>
+              
               <div
                 class="uploader-btn"
                 style="width:60px;right:226px;"
@@ -188,19 +186,7 @@
                   <template slot-scope="scope">{{ scope.row.DataYMDHMSStr }}</template>
                 </el-table-column>
               </el-table>
-              <!-- 新建文件夹输入框 -->
-              <div
-                class="newFolder"
-                :style="`display:${positionP?'block':'none'};top:${topHeight}px`"
-              >
-                <input id="selectValue" ref="input" type="text" class="newFolder-input" value />
-                <span class="newFolder-border" @click="createNewfolder">
-                  <i class="el-icon-check" />
-                </span>
-                <span class="newFolder-border" @click="cancelCreateNewfolder">
-                  <i class="el-icon-close" />
-                </span>
-              </div>
+              
             </uploader-drop>
             <uploader-list v-if="showList"></uploader-list>
           </uploader>
@@ -443,53 +429,6 @@ export default {
             // this.GetDocumentFolderListById();
           })
       }
-    },
-    // 创建文件夹
-    creatFolder () {
-      this.isAddFolder = true
-      this.tableData.unshift({
-        ID: 0,
-        ParentFolderID: 1,
-        Name: '新建文件夹',
-        CreationUserID: 2,
-        CreationDate: '2019-12-30',
-        Status: 'Created',
-        ProjectID: 3,
-        DisplayName: '超级管理员',
-        DataYMDHMSStr: '2019-12-30 10:28:36',
-        Document_FolderList: [],
-        Document_VersionInfoList: []
-      })
-      var cell = this.$refs.multipleTable.$el.childNodes[2].firstChild.lastChild
-        .firstChild.childNodes[1] // 获取第一行dom元素
-      console.log(this.tableData)
-      console.log(
-        this.$refs.multipleTable.$el.childNodes[2].firstChild.lastChild
-          .firstChild
-      )
-      if (cell) {
-        this.showRowInputEdit(cell, '新建文件夹')
-      } else {
-        console.log('未获取到元素')
-        this.positionP = true // 获取不到元素用自定义input代替
-      }
-
-      // this.currCell = cell;//保证其他地方点击时，input能隐藏
-    },
-    // 取消创建
-    cancelCreateNewfolder (row) {
-      event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
-      this.isAddFolder = true
-      console.log(row)
-      if (row.ID) {
-        if (this.currCell) {
-          this.hideRowInputEdit()
-        }
-      } else {
-        this.hideRowInputEdit(true)
-        this.tableData.shift()
-      }
-      this.positionP = false
     },
 
     // 获取所有文件夹和文件
