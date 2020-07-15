@@ -22,7 +22,6 @@
               @keyup.native.enter="submitForm('loginForm')"
             ></el-input>
           </el-form-item>
-          
           <el-form-item>
             <el-button type="primary" @click="submitForm('loginForm')" class="submit_btn">登 录</el-button>
           </el-form-item>
@@ -57,8 +56,8 @@ export default {
     }
   },
   methods: {
-    sign:function(){
-      this.$router.push('/signin');
+    sign: function () {
+      this.$router.push('/signin')
     },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
