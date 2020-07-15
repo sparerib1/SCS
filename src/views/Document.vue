@@ -38,9 +38,7 @@
                   <i class="el-icon-arrow-right"></i>
                 </label>
               </div>
-              <div class="uploader-btn" style="width:90px;right:334px;" @click="creatFolder">
-                <i class="el-icon-folder-add"></i> 新建文件夹
-              </div>
+              
               <div
                 class="uploader-btn"
                 style="width:60px;right:226px;"
@@ -187,19 +185,7 @@
                   <template slot-scope="scope">{{ scope.row.DataYMDHMSStr }}</template>
                 </el-table-column>
               </el-table>
-              <!-- 新建文件夹输入框 -->
-              <div
-                class="newFolder"
-                :style="`display:${positionP?'block':'none'};top:${topHeight}px`"
-              >
-                <input id="selectValue" ref="input" type="text" class="newFolder-input" value />
-                <span class="newFolder-border" @click="createNewfolder">
-                  <i class="el-icon-check" />
-                </span>
-                <span class="newFolder-border" @click="cancelCreateNewfolder">
-                  <i class="el-icon-close" />
-                </span>
-              </div>
+              
             </uploader-drop>
             <uploader-list v-if="showList"></uploader-list>
           </uploader>
@@ -388,108 +374,9 @@ export default {
       }
     },
 
-    createNewfolder (event) {
-      event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
-      console.log(this.isAddFolder)
-      if (!this.isAddFolder) {
-        this.currRow.Name = this.currInputVal
-        let type = 1
-        if (this.currRow.FolderID > 0) {
-          console.log('修改文件夹')
-          type = 0 // 修改文件夹
-        }
-        this.$axios
-          .get(
-            `/api/Document/UpdateDocumentFolder?type=${type}&&id=${this.currRow.ID}&&name=${this.currInputVal}`
-          )
-          .then(res => {
-            if ((type = 1)) {
-              // 修改文件
-              this.hideRowInputEdit()
-            } else {
-              // 修改文件夹啊
-              this.hideRowInputEdit(true)
-            }
-          })
-      } else {
-        console.log('添加文件夹')
-        var last = this.folderBreadcrumb.slice(-1)
-        let parentFolderID = last[0].ID
-        console.log(this.currInputVal)
-        if (!this.currInputVal) {
-          this.currInputVal = this.$refs.input.value
-        }
-        console.log(this.currInputVal)
-        this.$axios
-          .get(
-            `/api/Document/AddDocumentFolder?parentFolderID=${parentFolderID}&&name=${this.currInputVal}`
-          )
-          .then(res => {
-            this.currInputVal = '' // 清空input
-            // this.tableData[0] = res; //这样赋值，在异步操作里面无效
-            this.tableData.shift() // 所以先移除第一个
-            this.tableData.unshift(res) // 再将添加的文件返回插入到第一个
-            console.log(this.tableData)
-            this.hideRowInputEdit(true)
-            this.positionP = false
-            // 添加到当前文件夹下面
-
-            console.log(res)
-            res.Document_FolderList = [] /// /防止出错
-            res.Document_VersionInfoList = [] // 防止出错
-            this.currselectfolder.Document_FolderList.unshift(res)
-            // this.GetDocumentFolderListById();
-          })
-      }
-    },
+    
     // 创建文件夹
-    creatFolder () {
-      this.isAddFolder = true
-      this.tableData.unshift({
-        ID: 0,
-        ParentFolderID: 1,
-        Name: '新建文件夹',
-        CreationUserID: 2,
-        CreationDate: '2019-12-30',
-        Status: 'Created',
-        ProjectID: 3,
-        DisplayName: '超级管理员',
-        DataYMDHMSStr: '2019-12-30 10:28:36',
-        Document_FolderList: [],
-        Document_VersionInfoList: []
-      })
-      var cell = this.$refs.multipleTable.$el.childNodes[2].firstChild.lastChild
-        .firstChild.childNodes[1] // 获取第一行dom元素
-      console.log(this.tableData)
-      console.log(
-        this.$refs.multipleTable.$el.childNodes[2].firstChild.lastChild
-          .firstChild
-      )
-      if (cell) {
-        this.showRowInputEdit(cell, '新建文件夹')
-      } else {
-        console.log('未获取到元素')
-        this.positionP = true // 获取不到元素用自定义input代替
-      }
-
-      // this.currCell = cell;//保证其他地方点击时，input能隐藏
-    },
-    // 取消创建
-    cancelCreateNewfolder (row) {
-      event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
-      this.isAddFolder = true
-      console.log(row)
-      if (row.ID) {
-        if (this.currCell) {
-          this.hideRowInputEdit()
-        }
-      } else {
-        this.hideRowInputEdit(true)
-        this.tableData.shift()
-      }
-      this.positionP = false
-    },
-
+    
     // 获取所有文件夹和文件
     GetDocumentFolderListById () {
       this.$axios.get(`/api/Document/GetDocumentFolderListById`).then(res => {
