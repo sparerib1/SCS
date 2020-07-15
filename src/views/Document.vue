@@ -153,9 +153,10 @@
                     </label>
                     <label style="position: absolute;right:40px;display:none;color:#409eff">
                       <!-- <label style="margin:0px 5px;">分享</label> -->
+                      
                       <label
                       style="margin:0px 5px;cursor:pointer"
-                      @click.stop="showDocumentFolder(scope.row)"
+                      @click="dialogVisible = true"
                       >
                       <i class="el-icon-share"></i>分享
                       </label>
@@ -186,7 +187,17 @@
                   <template slot-scope="scope">{{ scope.row.DataYMDHMSStr }}</template>
                 </el-table-column>
               </el-table>
-              
+              <el-dialog
+  title="分享"
+  :visible.sync="dialogVisible"
+  width="40%"
+  :before-close="handleClose">
+  <span>{{sharecomment}}</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+</el-dialog>
             </uploader-drop>
             <uploader-list v-if="showList"></uploader-list>
           </uploader>
@@ -211,12 +222,13 @@ export default {
       currSelection: [], // 当前check多选集合
       isAddFolder: false,
       currInputVal: '',
+      sharecomment:'这是一条链接',
       currCell: '', // 当前选中的“行列”元素
       currRow: {}, // 当前选中行数据
       tableHeight: 0, // table自适应高度
       positionP: false, // 创建文件夹input是否显示
       topHeight: 128, // 创建文件夹input 距离顶部的高度
-
+      dialogVisible: false,
       // 上传文件 start
       autoStart: true,
       file: '',
@@ -288,7 +300,9 @@ export default {
       // 表格数据
       tableData: [],
       multipleSelection: []
+      
     }
+    
   },
   created () {
     // this.autoStart = false    //初始化时设置属性有效
@@ -313,6 +327,13 @@ export default {
     }, 1)
   },
   methods: {
+    handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     handleCurrentChange (row, column, cell, event) {
       this.currRow = row
       console.log('当前选中：' + JSON.stringify(row))
@@ -329,7 +350,10 @@ export default {
           this.isAddFolder = false
         }
       }
+
     },
+    
+  
     cellClick (row, column, cell, event) {
       event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
       if (cell.firstChild._prevClass === 'cell' || this.isAddFolder) {
