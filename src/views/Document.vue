@@ -3,6 +3,8 @@
     <el-row style="height: 100%;">
       <el-col onselectstart="return false;" :span="24" style="height:100%;padding-left:0px;">
         <div class="uploaderDiv">
+          <!--文件上传-->
+          <!--绑定属性、事件-->
           <uploader
             :options="options"
             :fileStatusText="fileStatusText"
@@ -37,7 +39,6 @@
                   <i class="el-icon-arrow-right"></i>
                 </label>
               </div>
-              
               <div
                 class="uploader-btn"
                 style="width:60px;right:226px;"
@@ -186,7 +187,6 @@
                   <template slot-scope="scope">{{ scope.row.DataYMDHMSStr }}</template>
                 </el-table-column>
               </el-table>
-              
             </uploader-drop>
             <uploader-list v-if="showList"></uploader-list>
           </uploader>

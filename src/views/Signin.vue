@@ -64,7 +64,6 @@ export default {
       }
       if (this.uError === '' && this.pError === '' && this.aError === '') {
       //  验证通过后通过axios来完成ajax请求，将注册信息传到后端
-      //  这里不涉及后端内容，仅提供思路
       //  this.$axios.get('路径?参数').then(res => ())
       //  this.$axios.post('路径',{参数}).then(res => ())
       //  默认注册成功，跳转到登陆页面
