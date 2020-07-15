@@ -155,7 +155,12 @@
                       <label>{{scope.row.Name}}</label>
                     </label>
                     <label style="position: absolute;right:40px;display:none;color:#409eff">
-                      <!-- <label style="margin:0px 5px;">分享</label> -->
+                      <label 
+                      style="margin:0px 5px;"
+                      @click.stop="showDocumentFolder(scope.row)"
+                      >
+                      <i class="el-icon-share"></i>分享
+                      </label> 
                       <label
                         style="margin:0px 5px;cursor:pointer"
                         @click.stop="deleteDocumentFolder(scope.row)"
