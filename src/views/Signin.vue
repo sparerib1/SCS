@@ -28,7 +28,7 @@
 <script>
 export default {
   // 这里是组件的名字，无影响
-  name: 'register',
+  name: 'signin',
   data: function () {
     return {
     // 这里主要是初始化用户输入的信息，以及错误提示

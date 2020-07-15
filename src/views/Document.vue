@@ -1,5 +1,4 @@
 <template>
-  
   <div id="app-container" class="app-container" style="height: calc(100% - 10px)">
     <el-row style="height: 100%;">
       <el-col onselectstart="return false;" :span="24" style="height:100%;padding-left:0px;">
@@ -153,12 +152,14 @@
                       <label>{{scope.row.Name}}</label>
                     </label>
                     <label style="position: absolute;right:40px;display:none;color:#409eff">
-                      <label 
-                      style="margin:0px 5px;"
+                      <!-- <label style="margin:0px 5px;">分享</label> -->
+                      <label
+                      style="margin:0px 5px;cursor:pointer"
                       @click.stop="showDocumentFolder(scope.row)"
                       >
                       <i class="el-icon-share"></i>分享
-                      </label> 
+                      </label>
+
                       <label
                         style="margin:0px 5px;cursor:pointer"
                         @click.stop="deleteDocumentFolder(scope.row)"
@@ -198,9 +199,9 @@
 <script>
 var n = 0
 var query = {
-  currentNode: 0,//当前节点
+  currentNode: 0, // 当前节点
   guid: '',
-  wjjName: '',//文件夹名称
+  wjjName: '', // 文件夹名称
   size: 0
 }
 export default {
@@ -323,6 +324,7 @@ export default {
       this.currSelection.push(row)// 加入到check集合中
       console.log(this.isAddFolder)
       if (this.isAddFolder) {
+        // eslint-disable-next-line eqeqeq
         if (row != this.tableData[0]) {
           this.isAddFolder = false
         }
@@ -330,12 +332,12 @@ export default {
     },
     cellClick (row, column, cell, event) {
       event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
-      if (cell.firstChild._prevClass == 'cell' || this.isAddFolder) {
+      if (cell.firstChild._prevClass === 'cell' || this.isAddFolder) {
         // this.isAddFolder = false;
         // 防止点击其它列是报错
         return
       }
-      if (this.currCell == cell) {
+      if (this.currCell === cell) {
         console.log(cell.firstChild.childNodes[1].firstChild.childNodes)
         this.showRowInputEdit(cell, row.Name)
       } else {
@@ -374,9 +376,61 @@ export default {
       }
     },
 
-    
-    // 创建文件夹
-    
+    createNewfolder (event) {
+      event.stopPropagation() // 阻止时间冒泡（也就是阻止全局点击事件触发）
+      console.log(this.isAddFolder)
+      if (!this.isAddFolder) {
+        this.currRow.Name = this.currInputVal
+        let type = 1
+        if (this.currRow.FolderID > 0) {
+          console.log('修改文件夹')
+          type = 0 // 修改文件夹
+        }
+        this.$axios
+          .get(
+            `/api/Document/UpdateDocumentFolder?type=${type}&&id=${this.currRow.ID}&&name=${this.currInputVal}`
+          )
+          .then(res => {
+            if ((type === 1)) {
+              // 修改文件
+              this.hideRowInputEdit()
+            } else {
+              // 修改文件夹啊
+              this.hideRowInputEdit(true)
+            }
+          })
+      } else {
+        console.log('添加文件夹')
+        var last = this.folderBreadcrumb.slice(-1)
+        let parentFolderID = last[0].ID
+        console.log(this.currInputVal)
+        if (!this.currInputVal) {
+          this.currInputVal = this.$refs.input.value
+        }
+        console.log(this.currInputVal)
+        this.$axios
+          .get(
+            `/api/Document/AddDocumentFolder?parentFolderID=${parentFolderID}&&name=${this.currInputVal}`
+          )
+          .then(res => {
+            this.currInputVal = '' // 清空input
+            // this.tableData[0] = res; //这样赋值，在异步操作里面无效
+            this.tableData.shift() // 所以先移除第一个
+            this.tableData.unshift(res) // 再将添加的文件返回插入到第一个
+            console.log(this.tableData)
+            this.hideRowInputEdit(true)
+            this.positionP = false
+            // 添加到当前文件夹下面
+
+            console.log(res)
+            res.Document_FolderList = [] /// /防止出错
+            res.Document_VersionInfoList = [] // 防止出错
+            this.currselectfolder.Document_FolderList.unshift(res)
+            // this.GetDocumentFolderListById();
+          })
+      }
+    },
+
     // 获取所有文件夹和文件
     GetDocumentFolderListById () {
       this.$axios.get(`/api/Document/GetDocumentFolderListById`).then(res => {
@@ -413,6 +467,7 @@ export default {
       // 鼠标悬浮”删除“按钮操作
       if (row.ID) {
         this.tableData = this.tableData.filter(item => {
+          // eslint-disable-next-line eqeqeq
           return item != row
         })
       }
@@ -421,6 +476,7 @@ export default {
         // 可在axios成功回调里面写前端删除
         this.currSelection.forEach(val => {
           this.tableData = this.tableData.filter(item => {
+            // eslint-disable-next-line eqeqeq
             return item != val
           })
         })
@@ -451,7 +507,7 @@ export default {
     handleNodeClick (data, node, a) {
       console.log('上一级：' + JSON.stringify(this.folderBreadcrumb))
       // 返回上一级
-      if (data == 0) {
+      if (data === 0) {
         var o = this.folderBreadcrumb.length - 1
         // splice方法，删除返回新数组
         if (o > 0) {
@@ -562,11 +618,13 @@ export default {
         return v.toString(16)
       })
     },
+    // eslint-disable-next-line camelcase
     toTree (data, parent_id) {
       var tree = []
       var temp
       for (var i = 0; i < data.length; i++) {
-        if (data[i].ID == parent_id) {
+        // eslint-disable-next-line camelcase
+        if (data[i].ID === parent_id) {
           var obj = data[i]
           temp = this.toTree(data, data[i].id)
           if (temp.length > 0) {
@@ -590,13 +648,13 @@ export default {
     cellMouseEnter (row, column, cell, event) {
       // 显示操作条  找一个特殊的条件判断，否则影响其他元素
       // console.log(cell.firstChild.className.trim());
-      if (cell.firstChild.className.trim() == 'cell el-tooltip') {
+      if (cell.firstChild.className.trim() === 'cell el-tooltip') {
         cell.firstChild.lastChild.style.display = 'inline'
       }
     },
     cellMouseLeave (row, column, cell, event) {
       // 隐藏操作条
-      if (cell.firstChild.className.trim() == 'cell el-tooltip') {
+      if (cell.firstChild.className.trim() === 'cell el-tooltip') {
         cell.firstChild.lastChild.style.display = 'none'
       }
     },
