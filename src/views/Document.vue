@@ -188,8 +188,6 @@
                   <template slot-scope="scope">{{ scope.row.DataYMDHMSStr }}</template>
                 </el-table-column>
               </el-table>
-<<<<<<< HEAD
-=======
               <el-dialog
   title="分享"
   :visible.sync="dialogVisible"
@@ -201,7 +199,6 @@
     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
   </span>
 </el-dialog>
->>>>>>> 33256b42cda3451180acbebc847ec8c38926ded2
             </uploader-drop>
             <uploader-list v-if="showList"></uploader-list>
           </uploader>
