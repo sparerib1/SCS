@@ -64,7 +64,7 @@ export default {
         if (valid) {
           // localStorage.setItem('eleToken', 'Basic qwerdf')
           // this.$router.push('/index')
-          // 下面是通过后台服务器请求，返回token方法，请自行编写后台代码，或者继续关注作者后面关于Node.js后台Chat
+          
           this.$axios
             .get(
               '/api/login/login?userName=' +
