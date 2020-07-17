@@ -40,8 +40,8 @@ export default {
   data () {
     return {
       loginUser: {
-        userName: 'admin',
-        password: '123456'
+        userName: '',
+        password: ''
       },
       rules: {
         userName: [
